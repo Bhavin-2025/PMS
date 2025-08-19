@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+.container{
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.custom-select .ant-select-selector {
+  border: 1px solid #DEE0E3;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.custom-select .ant-select-selection-placeholder {
+  color: #6B7582;
+  font-size: 16px;
+  left: 0;
+}
