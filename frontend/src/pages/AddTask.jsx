@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import SelectField from "../components/SelectField";
-import api from "../services/api";
 import InputField from "../components/InputField";
+import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import SelectField from "../components/SelectField";
+import DueDatePicker from "../components/DueDatePicker";
 
-const CreateNewProject = () => {
+const AddTask = () => {
   const initialState = {
     projectName: "",
     description: "",
@@ -54,25 +55,26 @@ const CreateNewProject = () => {
     setFormData(initialState);
   };
   const isFormValid = formData.projectName && formData.description;
-
   return (
     <div className="container">
-      <h3 className="flex mt-6 font-bold text-3xl">Create Project</h3>
-      <form className="flex flex-col mt-4 gap-3" onSubmit={handleSubmit}>
+      <h3 className="font-bold text-3xl mt-6">Add New Task</h3>
+      <form className="flex flex-col mt-5 gap-5" onSubmit={handleSubmit}>
         <InputField
           name="projectName"
-          label="Project Name"
-          placeholder="Enter project name"
+          label="Task Name"
+          placeholder="Enter Task name"
           value={formData.projectName}
           onChange={handleChange}
         />
-        <label className="font-medium text-base">Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-[450px] border border-gray-200 rounded-xl p-4 h-[144px]"
-        ></textarea>
+        <div className="flex flex-col w-[450px] gap-1">
+          <label className="font-medium text-base">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="border border-gray-200 rounded-xl p-4 h-[144px]"
+          ></textarea>
+        </div>
 
         <div className="flex flex-col w-[450px] gap-1">
           <label className="font-medium text-base">Assign Employee</label>
@@ -80,8 +82,30 @@ const CreateNewProject = () => {
             options={employeeOptions}
             value={selected}
             onChange={setSelected}
-            placeholder="Select employees"
+            placeholder="Select employee"
           />
+        </div>
+        <div className="flex flex-col w-[450px] gap-1">
+          <label className="font-medium text-base">Status</label>
+          <SelectField
+            options={employeeOptions}
+            value={selected}
+            onChange={setSelected}
+            placeholder="Select Status"
+          />
+        </div>
+        <div className="flex flex-col w-[450px] gap-1">
+          <label className="font-medium text-base">Priority</label>
+          <SelectField
+            options={employeeOptions}
+            value={selected}
+            onChange={setSelected}
+            placeholder="Priority"
+          />
+        </div>
+        <div className="flex flex-col w-[450px] gap-1">
+          <label className="font-medium text-base">Due Date</label>
+          <DueDatePicker />
         </div>
         <div className="flex justify-end space-x-3 mt-2">
           <button
@@ -100,7 +124,7 @@ const CreateNewProject = () => {
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            Create Project
+            Submit
           </button>
         </div>
       </form>
@@ -108,4 +132,4 @@ const CreateNewProject = () => {
   );
 };
 
-export default CreateNewProject;
+export default AddTask;

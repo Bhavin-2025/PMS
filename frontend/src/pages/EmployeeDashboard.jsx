@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
 const EmployeeDashboard = () => {
   return (
     <div>
-        <h2>EmployeeDashboard</h2>
+      <h2>EmployeeDashboard</h2>
     </div>
-  )
-}
+  );
+};
 
-export default EmployeeDashboard
+export default EmployeeDashboard;

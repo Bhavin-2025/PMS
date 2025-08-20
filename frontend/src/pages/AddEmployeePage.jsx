@@ -25,19 +25,13 @@ const AddEmployeePage = () => {
     e.preventDefault();
     try {
       // 🔹 POST request to JSON Server
-      const response = await api.post(
-        "/employees",
-        formData
-      );
+      const response = await api.post("/employees", formData);
 
       console.log("Employee added:", response.data);
 
       // 🔹 Reset form after successful submit
       setFormData(initialState);
       navigate("/admin");
-
-      // Later we can also redirect to Employee List page here
-      // navigate("/employees"); (when routing is ready)
     } catch (error) {
       console.error("Error adding employee:", error);
     }
@@ -56,7 +50,7 @@ const AddEmployeePage = () => {
   return (
     <div>
       <div className="container">
-        <h3 className="mt-6 text-4xl font-bold">Add New Employee</h3>
+        <h3 className="flex mt-6 text-3xl font-bold">Add New Employee</h3>
         <form onSubmit={handleSubmit}>
           <div className="w-[448px] mt-4 flex flex-col gap-5">
             <InputField

@@ -22,19 +22,19 @@ const Header = () => {
         </Link>
         <Link
           className="hover:underline decoration-[#2A67B2] underline-offset-10 "
-          to="/admin/project/create"
+          to="/admin/project"
         >
           Projects
         </Link>
         <Link
           className="hover:underline decoration-[#2A67B2] underline-offset-10 "
-          to="/admin/tasks"
+          to="/admin/project/tasks"
         >
           Task
         </Link>
-        <button className="bg-[#F2F2F5] rounded-xl p-3 font-bold">
+        <Link className="bg-[#F2F2F5] rounded-xl p-3 font-bold" to="/login">
           Logout
-        </button>
+        </Link>
       </nav>
     </header>
   );

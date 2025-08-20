@@ -15,17 +15,19 @@ import { ROLES } from "../config";
 import HomeLayout from "../components/HomeLayout";
 import AddEmployeePage from "../pages/AddEmployeePage";
 import CreateNewProject from "../pages/CreateNewProject";
+import ProjectListing from "../pages/ProjectListing";
+import ProjectDetailPage from "../pages/ProjectDetailPage";
+import AddTask from "../pages/AddTask";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route element={<HomeLayout />}>
-
           <Route
-            path="/admin"
+            path="admin"
             element={
               <RequireAuth allowedRoles={[ROLES.ADMIN]}>
                 <Outlet />
@@ -34,10 +36,15 @@ const AppRouter = () => {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="employees/add" element={<AddEmployeePage />} />
-            <Route path="project/create" element={<CreateNewProject/>}/>
+            <Route path="project">
+              <Route index element={<ProjectListing />} />
+              <Route path="create" element={<CreateNewProject />} />
+              <Route path=":id" element={<ProjectDetailPage />} />
+              <Route path="tasks" element={<AddTask />} />
+            </Route>
           </Route>
           <Route
-            path="/employee"
+            path="employee"
             element={
               <RequireAuth allowedRoles={[ROLES.EMPLOYEE]}>
                 <Outlet />
@@ -46,7 +53,6 @@ const AppRouter = () => {
           >
             <Route index element={<EmployeeDashboard />} />
           </Route>
-          <Route />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>

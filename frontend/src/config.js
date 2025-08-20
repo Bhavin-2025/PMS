@@ -4,7 +4,3 @@ export const ROLES = {
   ADMIN: "admin",
   EMPLOYEE: "employee",
 };
-
-export const PRIORITES = ["Low", "Medium", "High"];
-
-export const STATUSES = ["To Do", "In Progress", "Done"];

@@ -6,41 +6,42 @@ import { useAuth } from "../context/AuthContext";
 import { ROLES } from "../config";
 
 const LoginPage = () => {
-  const[email,setEmail] = useState("");
-  const[password,setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const{login} =useAuth();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
-  e.preventDefault(); // stop the form from reloading the page
+    e.preventDefault(); // stop the form from reloading the page
 
-  try {
-    // ask backend: “do you have a user with this email?”
-    const { data } = await api.get(`/employees?email=${encodeURIComponent(email)}`);
-    const user = data?.[0]; // JSON Server returns an array
+    try {
+      // ask backend: “do you have a user with this email?”
+      const { data } = await api.get(
+        `/employees?email=${encodeURIComponent(email)}`
+      );
+      const user = data?.[0]; // JSON Server returns an array
 
-    // compare passwords (mock: plaintext in db.json)
-    if (!user || user.password !== password) {
-      alert("Invalid email or password");
-      return;
+      // compare passwords (mock: plaintext in db.json)
+      if (!user || user.password !== password) {
+        alert("Invalid email or password");
+        return;
+      }
+
+      // make a pretend token and save everything in context
+      const token = Math.random().toString(36).slice(2);
+      login(user, token);
+
+      // ensure axios immediately sends token on next calls (optional, but handy)
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+      // go to the right dashboard
+      const to = user.role === ROLES.ADMIN ? "/admin" : "/employee";
+      navigate(to, { replace: true });
+    } catch (err) {
+      console.error(err);
+      alert("Network error. Is JSON Server running on port 5000?");
     }
-
-    // make a pretend token and save everything in context
-    const token = Math.random().toString(36).slice(2);
-    login(user, token);
-
-    // ensure axios immediately sends token on next calls (optional, but handy)
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    // go to the right dashboard
-    const to = user.role === ROLES.ADMIN ? "/admin" : "/employee";
-    navigate(to, { replace: true });
-  } catch (err) {
-    console.error(err);
-    alert("Network error. Is JSON Server running on port 5000?");
-  }
-};
-
+  };
 
   return (
     <div>
@@ -67,7 +68,7 @@ const LoginPage = () => {
                   name="email"
                   placeholder="Email"
                   value={email}
-                  onChange={(e)=>setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="flex flex-col ">
@@ -78,11 +79,14 @@ const LoginPage = () => {
                   name="password"
                   placeholder="Password"
                   value={password}
-                  onChange={(e)=>setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="mt-6">
-                <button type="submit" className="bg-[#0D80F2] rounded-lg w-full p-2 text-sm font-bold text-white cursor-pointer ">
+                <button
+                  type="submit"
+                  className="bg-[#0D80F2] rounded-lg w-full p-2 text-sm font-bold text-white cursor-pointer "
+                >
                   Log in
                 </button>
               </div>

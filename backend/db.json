@@ -22,11 +22,50 @@
       "email": "bhavinginiya78@gmail.com",
       "department": "React js",
       "role": "Intern"
+    },
+    {
+      "id": "6f89",
+      "name": "Vedang",
+      "email": "admin@example.com",
+      "department": "xyz",
+      "role": "nsjdjw"
     }
   ],
   "projects": [
     {
-      
+      "id": "e36c",
+      "projectName": "Acutas",
+      "description": "ABCD",
+      "employees": [
+        "d597"
+      ]
+    },
+    {
+      "id": "f8bb",
+      "projectName": "Admin Dragon",
+      "description": "Abcd",
+      "employees": [
+        "d597",
+        "2"
+      ]
+    },
+    {
+      "id": "ccbc",
+      "projectName": "acutaas",
+      "description": "asdfghjk",
+      "employees": [
+        "d597"
+      ]
+    },
+    {
+      "id": "4d13",
+      "projectName": "SKMEI",
+      "description": "WATCH COMPANY",
+      "employees": [
+        "d597",
+        "2",
+        "6f89"
+      ]
     }
   ],
   "tasks": []

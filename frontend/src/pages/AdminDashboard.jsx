@@ -24,32 +24,48 @@ const AdminDashboard = () => {
   }, []);
 
   const Employee_columns = [
-    { key: "name", header: "Name", render: (value) => <span className="text-black">{value}</span>  },
+    {
+      key: "name",
+      header: "Name",
+      render: (value) => <span className="text-black">{value}</span>,
+    },
     { key: "email", header: "Email" },
     { key: "department", header: "Department" },
     { key: "role", header: "Role" },
   ];
 
   const Project_columns = [
-    { key: "name", header: "Project Name",  render: (value) => <span className="text-black">{value}</span>  },
+    {
+      key: "projectName",
+      header: "Project Name",
+      render: (value) => <span className="text-black">{value}</span>,
+    },
     { key: "description", header: "Description" },
     { key: "tasks", header: "Tasks" },
   ];
 
-  const Project_data = [
-    {
-      name: "Project Phoneix",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, incidunt.",
-      tasks: 10,
-    },
-    {
-      name: "Project Aurora",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, incidunt.",
-      tasks: 12,
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [projectError, setProjectError] = useState();
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const res = await api.get("/projects");
+
+        const projectwithTasks = res.data.map((p) => ({
+          ...p,
+          tasks: "0 tasks",
+        }));
+        setProjects(projectwithTasks);
+      } catch (err) {
+        setError(`Failed to load projects:${err.message}`);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+    fetchProject();
+  }, []);
 
   return (
     <div>
@@ -57,7 +73,7 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-2 gap-6 mt-9">
           <div className="p-6 border border-gray-200 rounded-lg">
             <h2 className="text-base font-semibold">Total Projects</h2>
-            <p className="text-2xl font-bold ">12</p>
+            <p className="text-2xl font-bold ">{projects.length}</p>
           </div>
           <div className="p-6 border border-gray-200  rounded-lg">
             <h2 className="text-base font-semibold">Total Employees</h2>
@@ -95,7 +111,14 @@ const AdminDashboard = () => {
             Create New Project
           </Link>
         </div>
-        <Table columns={Project_columns} data={Project_data} />
+
+        {loadingProjects ? (
+          <p>Loading Projects...</p>
+        ) : projectError ? (
+          <p className="text-red-500">{projectError}</p>
+        ) : (
+          <Table columns={Project_columns} data={projects} />
+        )}
       </div>
     </div>
   );
