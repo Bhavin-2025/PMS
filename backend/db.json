@@ -29,6 +29,13 @@
       "email": "admin@example.com",
       "department": "xyz",
       "role": "nsjdjw"
+    },
+    {
+      "id": "62fc",
+      "name": "pavan vasoya",
+      "email": "pavan.vasoya@sarvadhi.com",
+      "department": "webflow",
+      "role": "employee"
     }
   ],
   "projects": [
@@ -48,25 +55,33 @@
         "d597",
         "2"
       ]
-    },
-    {
-      "id": "ccbc",
-      "projectName": "acutaas",
-      "description": "asdfghjk",
-      "employees": [
-        "d597"
-      ]
-    },
-    {
-      "id": "4d13",
-      "projectName": "SKMEI",
-      "description": "WATCH COMPANY",
-      "employees": [
-        "d597",
-        "2",
-        "6f89"
-      ]
     }
   ],
-  "tasks": []
+  "tasks": [
+    {
+      "id": "f509",
+      "taskName": "New Task I have added again",
+      "description": "Bhavin is doing",
+      "employees": [
+        "d597",
+        "62fc"
+      ],
+      "status": "In Progress",
+      "priority": "high",
+      "projectId": "f8bb",
+      "dueDate": "2025-08-28T18:30:00.000Z"
+    },
+    {
+      "id": "3360",
+      "taskName": "Design Page 12345",
+      "description": "asdfghjkl",
+      "employees": [
+        "6f89"
+      ],
+      "status": "Not Started",
+      "priority": "medium",
+      "projectId": "f8bb",
+      "dueDate": "2025-08-25T18:30:00.000Z"
+    }
+  ]
 }

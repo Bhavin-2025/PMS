@@ -34,7 +34,10 @@ const CreateNewProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("selected", selected);
+
     const payload = { ...formData, employees: selected };
+    console.log("payload", payload);
 
     try {
       const response = await api.post("/projects", payload);
@@ -81,6 +84,7 @@ const CreateNewProject = () => {
             value={selected}
             onChange={setSelected}
             placeholder="Select employees"
+            mode="multiple"
           />
         </div>
         <div className="flex justify-end space-x-3 mt-2">

@@ -41,7 +41,11 @@ const AdminDashboard = () => {
       render: (value) => <span className="text-black">{value}</span>,
     },
     { key: "description", header: "Description" },
-    { key: "tasks", header: "Tasks" },
+    {
+      key: "tasks",
+      header: "Tasks",
+      render: (tasks) => <span>{tasks?.length || 0} tasks</span>,
+    },
   ];
 
   const [projects, setProjects] = useState([]);
@@ -49,22 +53,29 @@ const AdminDashboard = () => {
   const [projectError, setProjectError] = useState();
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProjectsAndTasks = async () => {
       try {
-        const res = await api.get("/projects");
+        const [projectsRes, tasksRes] = await Promise.all([
+          api.get("/projects"),
+          api.get("/tasks"),
+        ]);
 
-        const projectwithTasks = res.data.map((p) => ({
-          ...p,
-          tasks: "0 tasks",
-        }));
-        setProjects(projectwithTasks);
+        const projectsWithTasks = projectsRes.data.map((p) => {
+          const projectTasks = tasksRes.data.filter(
+            (t) => t.projectId === p.id
+          );
+          return { ...p, tasks: projectTasks };
+        });
+
+        setProjects(projectsWithTasks);
       } catch (err) {
-        setError(`Failed to load projects:${err.message}`);
+        setProjectError(`Failed to load projects: ${err.message}`);
       } finally {
         setLoadingProjects(false);
       }
     };
-    fetchProject();
+
+    fetchProjectsAndTasks();
   }, []);
 
   return (

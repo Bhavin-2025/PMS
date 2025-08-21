@@ -7,9 +7,12 @@
   padding: 0 20px;
 }
 
+.custom-select {
+  height: 50px !important;
+}
 .custom-select .ant-select-selector {
   border: 1px solid #dee0e3;
-  padding: 10px 12px;
+  padding: 10px 12px !important;
   border-radius: 12px;
 }
 

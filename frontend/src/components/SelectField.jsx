@@ -15,7 +15,7 @@ import { Select, Space } from "antd";
 const SelectField = ({
   options = [],
   placeholder = "Select option",
-  mode = "multiple",
+  mode,
   value,
   onChange,
 }) => {

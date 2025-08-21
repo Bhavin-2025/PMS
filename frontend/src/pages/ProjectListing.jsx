@@ -2,6 +2,7 @@ import Table from "../components/Table";
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import { Link } from "react-router-dom";
+
 const ProjectListing = () => {
   const Project_columns = [
     {
@@ -10,7 +11,11 @@ const ProjectListing = () => {
       render: (value) => <span className="text-black">{value}</span>,
     },
     { key: "description", header: "Description" },
-    { key: "tasks", header: "Tasks" },
+    {
+      key: "tasks",
+      header: "Tasks",
+      render: (tasks) => <span>{tasks?.length || 0} tasks</span>, // show task count
+    },
     {
       key: "id",
       header: "Actions",
@@ -30,22 +35,31 @@ const ProjectListing = () => {
   const [projectError, setProjectError] = useState();
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProjectsAndTasks = async () => {
       try {
-        const res = await api.get("/projects");
+        // fetch both projects and tasks in parallel
+        const [projectsRes, tasksRes] = await Promise.all([
+          api.get("/projects"),
+          api.get("/tasks"),
+        ]);
 
-        const projectwithTasks = res.data.map((p) => ({
-          ...p,
-          tasks: "0 tasks",
-        }));
-        setProjects(projectwithTasks);
+        const projectsWithTasks = projectsRes.data.map((p) => {
+          // find tasks belonging to this project
+          const projectTasks = tasksRes.data.filter(
+            (t) => t.projectId === p.id
+          );
+          return { ...p, tasks: projectTasks }; // attach tasks array
+        });
+
+        setProjects(projectsWithTasks);
       } catch (err) {
-        setProjectError(`Failed to load projects:${err.message}`);
+        setProjectError(`Failed to load projects: ${err.message}`);
       } finally {
         setLoadingProjects(false);
       }
     };
-    fetchProject();
+
+    fetchProjectsAndTasks();
   }, []);
 
   return (
