@@ -40,48 +40,28 @@
   ],
   "projects": [
     {
-      "id": "e36c",
-      "projectName": "Acutas",
-      "description": "ABCD",
-      "employees": [
-        "d597"
-      ]
-    },
-    {
-      "id": "f8bb",
-      "projectName": "Admin Dragon",
-      "description": "Abcd",
+      "id": "e392",
+      "projectName": "Solance",
+      "description": "Solar Industry Project",
       "employees": [
         "d597",
-        "2"
+        "6f89"
       ]
     }
   ],
   "tasks": [
     {
-      "id": "f509",
-      "taskName": "New Task I have added again",
-      "description": "Bhavin is doing",
+      "id": "ceef",
+      "taskName": "Design UI and Fix Changes",
+      "description": "Abcd efg",
       "employees": [
         "d597",
-        "62fc"
-      ],
-      "status": "In Progress",
-      "priority": "high",
-      "projectId": "f8bb",
-      "dueDate": "2025-08-28T18:30:00.000Z"
-    },
-    {
-      "id": "3360",
-      "taskName": "Design Page 12345",
-      "description": "asdfghjkl",
-      "employees": [
         "6f89"
       ],
-      "status": "Not Started",
+      "status": "Completed",
       "priority": "medium",
-      "projectId": "f8bb",
-      "dueDate": "2025-08-25T18:30:00.000Z"
+      "projectId": "e392",
+      "dueDate": "2025-08-27T18:30:00.000Z"
     }
   ]
 }

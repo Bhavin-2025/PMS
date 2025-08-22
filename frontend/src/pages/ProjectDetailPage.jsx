@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { Button } from "antd";
+import { Button, Dropdown, Popconfirm, message } from "antd";
+
+const statusOptions = ["Not Started", "In Progress", "Completed"];
 
 const ProjectDetailPage = () => {
   const Project_columns = [
@@ -13,15 +15,18 @@ const ProjectDetailPage = () => {
   ];
 
   const { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [unsavedTasks, setUnsavedTasks] = useState([]);
 
+  // Fetch tasks
   useEffect(() => {
     api.get("/tasks").then((res) => setTasks(res.data));
   }, []);
 
-  // 🔑 Normalize projectId for comparison
+  // Filter tasks by project
   const projectTasks = tasks.filter((task) => {
     if (!task.projectId) return false;
     if (typeof task.projectId === "string") {
@@ -34,28 +39,94 @@ const ProjectDetailPage = () => {
   });
 
   const rows =
-    projectTasks.map((task) => ({
-      tasks: task.taskName,
-      employees: (task.employees || [])
-        .filter(Boolean) // remove nulls
-        .map(
-          (empId) => employees.find((e) => e.id === empId)?.name || "Unknown"
-        )
-        .join(", "),
-      dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—",
-      status: task.status,
-    })) || [];
+    projectTasks.map((task) => {
+      const items = statusOptions
+        .filter((status) => status !== task.status) // only show other statuses
+        .map((status) => ({
+          key: status,
+          label: status,
+        }));
 
+      return {
+        tasks: task.taskName,
+        employees: (task.employees || [])
+          .filter(Boolean)
+          .map(
+            (empId) => employees.find((e) => e.id === empId)?.name || "Unknown"
+          )
+          .join(", "),
+        dueDate: task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString()
+          : "—",
+        status: (
+          <Dropdown
+            menu={{
+              items,
+              onClick: (e) => {
+                const newStatus = e.key;
+
+                // Update UI
+                setTasks((prev) =>
+                  prev.map((t) =>
+                    t.id === task.id ? { ...t, status: newStatus } : t
+                  )
+                );
+
+                // Track unsaved changes
+                setUnsavedTasks((prev) => {
+                  const already = prev.find((t) => t.id === task.id);
+                  if (already) {
+                    return prev.map((t) =>
+                      t.id === task.id ? { ...t, status: newStatus } : t
+                    );
+                  }
+                  return [...prev, { ...task, status: newStatus }];
+                });
+              },
+            }}
+            trigger={["click"]}
+          >
+            <Button>{task.status}</Button>
+          </Dropdown>
+        ),
+      };
+    }) || [];
+
+  // Fetch project details
   useEffect(() => {
     api.get(`/projects/${id}`).then((res) => setProject(res.data));
   }, [id]);
 
-  console.log(project);
-
+  // Fetch employees
   useEffect(() => {
     api.get(`/employees`).then((res) => setEmployees(res.data));
   }, []);
-  console.log("project?.employees", Array.isArray(project?.employees));
+
+  const handleSaveChanges = async () => {
+    try {
+      await Promise.all(
+        unsavedTasks.map((task) =>
+          api.patch(`/tasks/${task.id}`, { status: task.status })
+        )
+      );
+      setUnsavedTasks([]); // reset after save
+      message.success("✅ All changes saved!");
+    } catch (err) {
+      console.error("❌ Error saving changes:", err);
+      message.error("❌ Failed to save changes!");
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    try {
+      await api.delete(`/projects/${id}`);
+      message.success("✅ Project deleted successfully!");
+      navigate("/admin/project"); // redirect to project list
+    } catch (err) {
+      console.error("❌ Error deleting project:", err);
+      message.error("❌ Failed to delete project!");
+    }
+  };
 
   return (
     <div>
@@ -100,17 +171,6 @@ const ProjectDetailPage = () => {
 
         <div className="flex justify-between items-center mt-5">
           <h4 className="font-bold text-lg">Tasks</h4>
-          <div className="flex gap-5">
-            <button className="py-1.5 px-4 text-sm bg-[#F0F2F5] rounded-lg font-medium cursor-pointer">
-              Not Started
-            </button>
-            <button className="py-1.5 px-4 text-sm bg-[#F0F2F5] rounded-lg font-medium cursor-pointer">
-              In Progress
-            </button>
-            <button className="py-1.5 px-4 text-sm bg-[#F0F2F5] rounded-lg font-medium cursor-pointer">
-              Completed
-            </button>
-          </div>
         </div>
 
         <Table columns={Project_columns} data={rows} />
@@ -125,10 +185,25 @@ const ProjectDetailPage = () => {
         </div>
 
         <div className="flex justify-end gap-5">
-          <button className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer">
-            Delete Project
-          </button>
-          <Link className="bg-[#0D80F2] text-white text-sm py-2 px-4 rounded-lg font-medium cursor-pointer">
+          <Popconfirm
+            title="Are you sure you want to delete this project?"
+            onConfirm={handleDeleteProject}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer">
+              Delete Project
+            </button>
+          </Popconfirm>
+
+          <Link
+            onClick={handleSaveChanges}
+            className={`text-sm py-2 px-4 rounded-lg font-medium cursor-pointer ${
+              unsavedTasks.length === 0
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-[#0D80F2] text-white"
+            }`}
+          >
             Save Changes
           </Link>
         </div>

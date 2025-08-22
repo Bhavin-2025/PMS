@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://p5tgmv3m-5000.inc1.devtunnels.ms";
+export const API_BASE_URL = "http://localhost:5000";
 
 export const ROLES = {
   ADMIN: "admin",
