@@ -10,7 +10,7 @@ export default function RequireAuth({ children, allowedRoles }) {
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    const redirectTo = user.role === "admin" ? "/admin" : "/employee";
+    const redirectTo = user.role === "admin" ? "/admin" : "/employee/project";
     return <Navigate to={redirectTo} replace />;
   }
   return children;

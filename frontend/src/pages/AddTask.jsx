@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import InputField from "../components/InputField";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import SelectField from "../components/SelectField";
 import DueDatePicker from "../components/DueDatePicker";
-import { useLocation } from "react-router-dom";
 
 const AddTask = () => {
   const initialState = {
@@ -16,12 +15,15 @@ const AddTask = () => {
   const [status, setStatus] = useState(null);
   const [priority, setPriority] = useState(null);
   const [project, setProject] = useState(null);
+  console.log("project", project);
+
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [projectOptions, setProjectOptions] = useState([]);
   const [dueDate, setDueDate] = useState(null);
 
   const navigate = useNavigate();
+  console.log("employeeOptions", employeeOptions);
 
   const statusOptions = [
     { label: "Not Started", value: "Not Started" },
@@ -38,43 +40,112 @@ const AddTask = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const projectId = searchParams.get("projectId");
+
+  // Fetch projects + employees
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get("/projects");
-        const mapped = res.data.map((emp) => ({
-          label: emp.projectName,
-          value: emp.id,
+        const projectRes = await api.get("/projects");
+        const empRes = await api.get("/employees");
+
+        const projects = projectRes.data;
+        const employees = empRes.data;
+
+        console.log("employees", employees);
+
+        // prepare project options with employeeIds
+        const mappedProjects = projects.map((proj) => ({
+          label: proj.projectName,
+          value: proj.id,
+          employeeIds: proj.employees || [],
         }));
-        setProjectOptions(mapped);
+
+        setProjectOptions(mappedProjects);
+
         if (projectId) {
-          const selectedProject = mapped.find(
+          const selectedProject = mappedProjects.find(
             (p) => p.value.toString() === projectId.toString()
           );
           setProject(selectedProject || null);
+
+          if (selectedProject) {
+            const allowedEmployees = employees.filter((emp) =>
+              selectedProject.employeeIds.includes(emp.id)
+            );
+            setEmployeeOptions(
+              allowedEmployees.map((emp) => ({
+                label: emp.name,
+                value: emp.id,
+              }))
+            );
+          }
         }
       } catch (error) {
-        console.error("Error fetching employees:", error);
+        console.error("Error fetching data:", error);
       }
     };
-    fetchProjects();
-  }, [projectId]);
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await api.get("/employees");
-        const mapped = res.data.map((emp) => ({
+    fetchData();
+  }, [projectId]);
+  //   // proj here will be the whole object { label, value, employeeIds }
+  //   console.log("Selected Project:", proj);
+
+  //   setProject(proj);
+  //   setAssignedEmployees([]); // reset previously selected employees
+
+  //   try {
+  //     const empRes = await api.get("/employees");
+  //     const employees = empRes.data;
+
+  //     // Filter employees that belong to this project
+  //     const allowedEmployees = employees.filter((emp) =>
+  //       proj.employeeIds.includes(emp.id)
+  //     );
+
+  //     console.log("Allowed Employees:", allowedEmployees);
+
+  //     setEmployeeOptions(
+  //       allowedEmployees.map((emp) => ({
+  //         label: emp.name,
+  //         value: emp.id,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching employees:", error);
+  //   }
+  // };
+
+  const handleProjectChange = async (projId) => {
+    try {
+      const projRes = await api.get("/projects");
+      const empRes = await api.get("/employees");
+
+      const projectData = projRes.data; // all projects
+      const employeesData = empRes.data; // all employees
+
+      // find selected project
+      const project = projectData.find((p) => p.id === projId);
+      console.log(project, "selected project");
+
+      if (!project) return;
+
+      // match employees by id
+      const allowedEmployees = employeesData.filter((emp) =>
+        project.employees.includes(emp.id)
+      );
+
+      console.log(allowedEmployees, "allowedEmployees");
+
+      setEmployeeOptions(
+        allowedEmployees.map((emp) => ({
           label: emp.name,
           value: emp.id,
-        }));
-        setEmployeeOptions(mapped);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-    fetchEmployees();
-  }, []);
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +172,7 @@ const AddTask = () => {
 
     try {
       const response = await api.post("/tasks", payload);
-      console.log("Project Created:", response.data);
+      console.log("Task Created:", response.data);
 
       setFormData(initialState);
       setAssignedEmployees([]);
@@ -110,7 +181,7 @@ const AddTask = () => {
       setPriority(null);
       navigate("/admin/project");
     } catch (error) {
-      console.log("Error creating project", error);
+      console.log("Error creating task", error);
     }
   };
 
@@ -140,8 +211,8 @@ const AddTask = () => {
           <label className="font-medium text-base">Project Name</label>
           <SelectField
             options={projectOptions}
-            value={project}
-            onChange={setProject}
+            value={project?.projectName}
+            onChange={handleProjectChange}
             placeholder="Select Project"
             className="custom-select"
           />
@@ -159,7 +230,7 @@ const AddTask = () => {
           <label className="font-medium text-base">Description</label>
           <textarea
             name="description"
-            value={formData.description}
+            value={formData?.description}
             onChange={handleChange}
             className="border border-gray-200 rounded-xl p-4 h-[144px]"
           />

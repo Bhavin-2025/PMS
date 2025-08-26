@@ -2,16 +2,23 @@ import React, { useState } from "react";
 import InputField from "../components/InputField";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import SelectField from "../components/SelectField";
 
 const AddEmployeePage = () => {
   const initialState = {
     name: "",
     email: "",
     department: "",
-    role: "",
+    role: null,
+    password: "",
   };
 
   const [formData, setFormData] = useState(initialState);
+
+  const roleOptions = [
+    { label: "Admin", value: "admin" },
+    { label: "Employee", value: "employee" },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +52,11 @@ const AddEmployeePage = () => {
 
   //    Helper function for button disableing
   const isFormValid =
-    formData.name && formData.email && formData.department && formData.role;
+    formData.name &&
+    formData.email &&
+    formData.department &&
+    formData.role &&
+    formData.password;
 
   return (
     <div>
@@ -68,19 +79,30 @@ const AddEmployeePage = () => {
               placeholder="Enter employee's email address"
             />
             <InputField
+              label="Password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter a password"
+            />
+            <InputField
               label="Department"
               name="department"
               value={formData.department}
               onChange={handleChange}
               placeholder="Enter employee's department"
             />
-            <InputField
-              label="Role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              placeholder="Enter employee's role"
-            />
+
+            <div className="flex flex-col gap-1">
+              <label className="font-medium text-base">Role</label>
+              <SelectField
+                placeholder="Select Role"
+                value={formData.role}
+                onChange={(value) => setFormData({ ...formData, role: value })}
+                options={roleOptions}
+              />
+            </div>
           </div>
           <div className="flex justify-end space-x-3">
             <button

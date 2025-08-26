@@ -18,6 +18,7 @@ import CreateNewProject from "../pages/CreateNewProject";
 import ProjectListing from "../pages/ProjectListing";
 import ProjectDetailPage from "../pages/ProjectDetailPage";
 import AddTask from "../pages/AddTask";
+import EditProjectPage from "../pages/EditProjectPage";
 
 const AppRouter = () => {
   return (
@@ -41,6 +42,7 @@ const AppRouter = () => {
               <Route path="create" element={<CreateNewProject />} />
               <Route path=":id" element={<ProjectDetailPage />} />
               <Route path="tasks" element={<AddTask />} />
+              <Route path="edit/:id" element={<EditProjectPage />} />
             </Route>
           </Route>
           <Route
@@ -51,7 +53,12 @@ const AppRouter = () => {
               </RequireAuth>
             }
           >
-            <Route index element={<EmployeeDashboard />} />
+            <Route index element={<ProjectListing />} />
+            <Route path="project">
+              <Route index element={<ProjectListing />} />
+              <Route path=":id" element={<ProjectDetailPage />} />
+              <Route path="tasks" element={<AddTask />} />
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<PageNotFound />} />

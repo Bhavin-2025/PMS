@@ -18,10 +18,10 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res, 
+  (res) => res,
   (err) => {
     console.error("API Error:", err?.response?.status, err?.message);
-    return Promise.reject(err); 
+    return Promise.reject(err);
   }
 );
 

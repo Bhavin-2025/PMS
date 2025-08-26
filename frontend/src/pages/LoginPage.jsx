@@ -35,7 +35,7 @@ const LoginPage = () => {
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
       // go to the right dashboard
-      const to = user.role === ROLES.ADMIN ? "/admin" : "/employee";
+      const to = user.role === ROLES.ADMIN ? "/admin" : "/employee/project";
       navigate(to, { replace: true });
     } catch (err) {
       console.error(err);

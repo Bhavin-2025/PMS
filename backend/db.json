@@ -9,59 +9,72 @@
       "role": "admin"
     },
     {
-      "id": "2",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "password": "john123",
-      "department": "Development",
-      "role": "employee"
-    },
-    {
       "id": "d597",
       "name": "Bhavin Giniya",
       "email": "bhavinginiya78@gmail.com",
       "department": "React js",
-      "role": "Intern"
-    },
-    {
-      "id": "6f89",
-      "name": "Vedang",
-      "email": "admin@example.com",
-      "department": "xyz",
-      "role": "nsjdjw"
-    },
-    {
-      "id": "62fc",
-      "name": "pavan vasoya",
-      "email": "pavan.vasoya@sarvadhi.com",
-      "department": "webflow",
+      "password": "bhavin123",
       "role": "employee"
+    },
+    {
+      "id": "1e33",
+      "name": "Kashish",
+      "email": "kashish@gmail.com",
+      "department": "React js",
+      "role": "employee",
+      "password": "kashish123"
+    },
+    {
+      "id": "7b91",
+      "name": "pawan",
+      "email": "pawan@gmail.com",
+      "department": "WebFlow",
+      "role": "employee",
+      "password": "pawan123"
+    },
+    {
+      "id": "aa69",
+      "name": "Anish",
+      "email": "anish@sarvadhi.com",
+      "department": "AI",
+      "role": "employee",
+      "password": "Anish123"
     }
   ],
   "projects": [
     {
-      "id": "e392",
-      "projectName": "Solance",
-      "description": "Solar Industry Project",
-      "employees": [
-        "d597",
-        "6f89"
-      ]
+      "id": "dfed",
+      "projectName": "Admin Dragon",
+      "description": "A centralized platform for managing projects, employees, and tasks with role-based access ",
+      "employees": ["d597", "1e33", "7b91"]
+    },
+    {
+      "id": "021c",
+      "projectName": "Solnce",
+      "description": "project tracking, enhance team productivity, and ensure seamless communication.",
+      "employees": ["1e33", "7b91"]
     }
   ],
   "tasks": [
     {
-      "id": "ceef",
-      "taskName": "Design UI and Fix Changes",
-      "description": "Abcd efg",
-      "employees": [
-        "d597",
-        "6f89"
-      ],
+      "id": "e73c",
+      "taskName": "Design Page",
+      "description": "fix page",
+      "employees": ["1e33"],
       "status": "Completed",
       "priority": "medium",
-      "projectId": "e392",
-      "dueDate": "2025-08-27T18:30:00.000Z"
+      "projectId": "dfed",
+      "dueDate": "2025-08-29T18:30:00.000Z"
+    },
+    {
+      "id": "ba65",
+      "taskName": "Design UI and Fix Changes",
+      "description": "ABCDEF",
+      "employees": ["d597"],
+      "status": "Not Started",
+      "priority": "high",
+      "projectId": "dfed",
+      "dueDate": "2025-08-28T18:30:00.000Z"
     }
   ]
 }
