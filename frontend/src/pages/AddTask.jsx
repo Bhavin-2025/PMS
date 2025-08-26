@@ -15,7 +15,7 @@ const AddTask = () => {
   const [status, setStatus] = useState(null);
   const [priority, setPriority] = useState(null);
   const [project, setProject] = useState(null);
-  console.log("project", project);
+  // console.log("project", rpoy);
 
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
@@ -66,6 +66,7 @@ const AddTask = () => {
           const selectedProject = mappedProjects.find(
             (p) => p.value.toString() === projectId.toString()
           );
+          // console.log("selectedProject", selectedProject);
           setProject(selectedProject || null);
 
           if (selectedProject) {
@@ -86,7 +87,9 @@ const AddTask = () => {
     };
 
     fetchData();
-  }, [projectId]);
+  }, [projectId, project]);
+
+  // const handleProjectChange = async (proj) => {
   //   // proj here will be the whole object { label, value, employeeIds }
   //   console.log("Selected Project:", proj);
 
@@ -126,7 +129,7 @@ const AddTask = () => {
       // find selected project
       const project = projectData.find((p) => p.id === projId);
       console.log(project, "selected project");
-
+      setProject(project.projectName);
       if (!project) return;
 
       // match employees by id
@@ -211,7 +214,7 @@ const AddTask = () => {
           <label className="font-medium text-base">Project Name</label>
           <SelectField
             options={projectOptions}
-            value={project?.projectName}
+            value={project}
             onChange={handleProjectChange}
             placeholder="Select Project"
             className="custom-select"
