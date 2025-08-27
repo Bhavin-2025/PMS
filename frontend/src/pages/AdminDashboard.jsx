@@ -123,7 +123,7 @@ const AdminDashboard = () => {
           <h2 className="font-bold text-[22px]">Employees</h2>
           <Link
             to="/admin/employees/add"
-            className="bg-[#DBE8F2] rounded-xl p-2.5 font-bold text-sm cursor-pointer"
+            className="bg-[#DBE8F2] rounded-xl p-2.5 font-bold text-sm cursor-pointer hover:bg-[#cadbe8]"
           >
             Add New Employee
           </Link>
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
           <h2 className="font-bold text-[22px]">Projects</h2>
           <Link
             to="/admin/project/create"
-            className="bg-[#DBE8F2] rounded-xl p-2.5 font-bold text-sm cursor-pointer"
+            className="bg-[#DBE8F2] rounded-xl p-2.5 font-bold text-sm cursor-pointer hover:bg-[#cadbe8]"
           >
             Create New Project
           </Link>

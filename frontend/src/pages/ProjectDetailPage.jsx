@@ -222,14 +222,14 @@ const ProjectDetailPage = () => {
           {user?.role === "admin" && (
             <Link
               to={`/admin/project/edit/${id}`}
-              className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer"
+              className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer hover:bg-gray-200"
             >
               Edit Project
             </Link>
           )}
           <Link
             to={`../tasks?projectId=${id}`}
-            className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer"
+            className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer hover:bg-gray-200 "
           >
             Add Task
           </Link>
@@ -279,7 +279,7 @@ const ProjectDetailPage = () => {
       <div className="flex mt-4">
         <Link
           to={`../tasks?projectId=${id}`}
-          className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer"
+          className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer hover:bg-gray-200"
         >
           Add Task
         </Link>
@@ -294,7 +294,7 @@ const ProjectDetailPage = () => {
             okText="Yes"
             cancelText="No"
           >
-            <button className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer">
+            <button className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer hover:bg-gray-200 ">
               Delete Project
             </button>
           </Popconfirm>

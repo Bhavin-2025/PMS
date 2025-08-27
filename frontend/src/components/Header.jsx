@@ -59,7 +59,10 @@ const Header = () => {
           </>
         )}
 
-        <Link className="bg-[#F2F2F5] rounded-xl p-3 font-bold" to="/login">
+        <Link
+          className="bg-[#F2F2F5] rounded-xl p-3 font-bold hover:bg-gray-200"
+          to="/login"
+        >
           Logout
         </Link>
       </nav>
