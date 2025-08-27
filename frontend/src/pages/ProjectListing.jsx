@@ -105,7 +105,7 @@ const ProjectListing = () => {
         {user?.role === "admin" && (
           <Link
             to="/admin/project/create"
-            className="bg-[#DBE8F2] rounded-xl p-2.5 font-bold text-sm cursor-pointer hover:bg-[#cadbe8]"
+            className="bg-[#DBE8F2] rounded-xl px-4 py-2 font-bold text-sm cursor-pointer hover:bg-[#cadbe8]"
           >
             Create New Project
           </Link>

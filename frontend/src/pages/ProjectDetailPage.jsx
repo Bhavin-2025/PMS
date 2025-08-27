@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { Button, Dropdown, Popconfirm, message } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Popconfirm, message, Avatar, Tooltip } from "antd";
+import { DeleteOutlined, UserOutlined } from "@ant-design/icons";
 
 const statusOptions = ["Not Started", "In Progress", "Completed"];
 
@@ -66,7 +66,7 @@ const ProjectDetailPage = () => {
   // Table columns
   const baseColumns = [
     { key: "tasks", header: "Task Name" },
-    { key: "description", header: "Description" }, // ✅ New column
+    { key: "description", header: "Description" },
     { key: "employees", header: "Assignee" },
     { key: "dueDate", header: "Due Date" },
     { key: "status", header: "Status" },
@@ -95,7 +95,7 @@ const ProjectDetailPage = () => {
 
           const row = {
             tasks: task.taskName,
-            description: task.description, // ✅ add description here
+            description: task.description,
             employees: (task.employees || [])
               .map(
                 (empId) =>
@@ -236,20 +236,38 @@ const ProjectDetailPage = () => {
         </div>
       </div>
 
-      {/* Assigned Employees */}
+      {/* ✅ Assigned Employees with Avatar + Name */}
       <div className="flex flex-col mt-4 gap-2">
         <h4 className="text-lg font-bold">Assigned Employees</h4>
-        <div>
+        <div className="flex flex-wrap gap-4 mt-2">
           {Array.isArray(project?.employees) &&
-            project?.employees.map((empId, index) => {
-              const emp = employees?.find((e) => e.id === empId);
+          project?.employees.length > 0 ? (
+            project.employees.map((empId) => {
+              const emp = employees.find((e) => e.id === empId);
+              if (!emp) return null;
               return (
-                <span key={empId}>
-                  {emp?.name || "Unknown"}
-                  {index < project.employees.length - 1 && ", "}
-                </span>
+                <div
+                  key={empId}
+                  className="flex gap-2 items-center bg-[#f5f5f5] p-1 rounded-lg shadow-sm "
+                >
+                  <div>
+                    <Avatar
+                      style={{ backgroundColor: "#1677ff" }}
+                      size="small"
+                      icon={<UserOutlined />}
+                    />
+                  </div>
+                  <div>
+                    <span className="mt-1 text-sm font-medium text-gray-700">
+                      {emp.name}
+                    </span>
+                  </div>
+                </div>
               );
-            })}
+            })
+          ) : (
+            <span className="text-gray-500">No employees assigned</span>
+          )}
         </div>
       </div>
 
