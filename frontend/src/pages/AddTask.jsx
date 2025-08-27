@@ -15,16 +15,15 @@ const AddTask = () => {
   const [status, setStatus] = useState(null);
   const [priority, setPriority] = useState(null);
   const [project, setProject] = useState(null);
+  // console.log("project", rpoy);
+
   const [assignedEmployees, setAssignedEmployees] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [projectOptions, setProjectOptions] = useState([]);
   const [dueDate, setDueDate] = useState(null);
-  const [allEmployees, setAllEmployees] = useState([]);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const projectIdFromQuery = searchParams.get("projectId");
+  console.log("employeeOptions", employeeOptions);
 
   const statusOptions = [
     { label: "Not Started", value: "Not Started" },
@@ -38,19 +37,23 @@ const AddTask = () => {
     { label: "High", value: "high" },
   ];
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const projectId = searchParams.get("projectId");
+
+  // Fetch projects + employees
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [projectRes, empRes] = await Promise.all([
-          api.get("/projects"),
-          api.get("/employees"),
-        ]);
+        const projectRes = await api.get("/projects");
+        const empRes = await api.get("/employees");
 
         const projects = projectRes.data;
         const employees = empRes.data;
 
-        setAllEmployees(employees);
+        console.log("employees", employees);
 
+        // prepare project options with employeeIds
         const mappedProjects = projects.map((proj) => ({
           label: proj.projectName,
           value: proj.id,
@@ -59,18 +62,17 @@ const AddTask = () => {
 
         setProjectOptions(mappedProjects);
 
-        // If projectId is passed via query, preselect it
-        if (projectIdFromQuery) {
+        if (projectId) {
           const selectedProject = mappedProjects.find(
-            (p) => p.value.toString() === projectIdFromQuery.toString()
+            (p) => p.value.toString() === projectId.toString()
           );
-          if (selectedProject) {
-            setProject(selectedProject);
+          // console.log("selectedProject", selectedProject);
+          setProject(selectedProject || null);
 
+          if (selectedProject) {
             const allowedEmployees = employees.filter((emp) =>
               selectedProject.employeeIds.includes(emp.id)
             );
-
             setEmployeeOptions(
               allowedEmployees.map((emp) => ({
                 label: emp.name,
@@ -78,14 +80,6 @@ const AddTask = () => {
               }))
             );
           }
-        } else {
-          // default all employees if no project selected
-          setEmployeeOptions(
-            employees.map((emp) => ({
-              label: emp.name,
-              value: emp.id,
-            }))
-          );
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -93,22 +87,67 @@ const AddTask = () => {
     };
 
     fetchData();
-  }, [projectIdFromQuery]);
+  }, [projectId, project]);
 
-  const handleProjectChange = (selectedProject) => {
-    setProject(selectedProject);
-    setAssignedEmployees([]);
+  // const handleProjectChange = async (proj) => {
+  //   // proj here will be the whole object { label, value, employeeIds }
+  //   console.log("Selected Project:", proj);
 
-    const allowedEmployees = allEmployees.filter((emp) =>
-      selectedProject.employeeIds.includes(emp.id)
-    );
+  //   setProject(proj);
+  //   setAssignedEmployees([]); // reset previously selected employees
 
-    setEmployeeOptions(
-      allowedEmployees.map((emp) => ({
-        label: emp.name,
-        value: emp.id,
-      }))
-    );
+  //   try {
+  //     const empRes = await api.get("/employees");
+  //     const employees = empRes.data;
+
+  //     // Filter employees that belong to this project
+  //     const allowedEmployees = employees.filter((emp) =>
+  //       proj.employeeIds.includes(emp.id)
+  //     );
+
+  //     console.log("Allowed Employees:", allowedEmployees);
+
+  //     setEmployeeOptions(
+  //       allowedEmployees.map((emp) => ({
+  //         label: emp.name,
+  //         value: emp.id,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching employees:", error);
+  //   }
+  // };
+
+  const handleProjectChange = async (projId) => {
+    try {
+      const projRes = await api.get("/projects");
+      const empRes = await api.get("/employees");
+
+      const projectData = projRes.data; // all projects
+      const employeesData = empRes.data; // all employees
+
+      // find selected project
+      const project = projectData.find((p) => p.id === projId);
+      console.log(project, "selected project");
+      setProject(project.projectName);
+      if (!project) return;
+
+      // match employees by id
+      const allowedEmployees = employeesData.filter((emp) =>
+        project.employees.includes(emp.id)
+      );
+
+      console.log(allowedEmployees, "allowedEmployees");
+
+      setEmployeeOptions(
+        allowedEmployees.map((emp) => ({
+          label: emp.name,
+          value: emp.id,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
   };
 
   const handleChange = (e) => {
@@ -122,14 +161,15 @@ const AddTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!project) return;
-
     const payload = {
       ...formData,
-      employees: assignedEmployees,
+      employees:
+        assignedEmployees && assignedEmployees.length > 0
+          ? assignedEmployees
+          : [],
       status: status?.value || status || "",
       priority: priority?.value || priority || "",
-      projectId: project.value, // ✅ store ID here
+      projectId: project?.value || project,
       dueDate,
     };
 
@@ -142,11 +182,9 @@ const AddTask = () => {
       setProject(null);
       setStatus(null);
       setPriority(null);
-      setDueDate(null);
-
       navigate("/admin/project");
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.log("Error creating task", error);
     }
   };
 
@@ -195,7 +233,7 @@ const AddTask = () => {
           <label className="font-medium text-base">Description</label>
           <textarea
             name="description"
-            value={formData.description}
+            value={formData?.description}
             onChange={handleChange}
             className="border border-gray-200 rounded-xl p-4 h-[144px]"
           />
@@ -241,14 +279,14 @@ const AddTask = () => {
           <button
             type="button"
             onClick={handleCancel}
-            className="bg-[#F2F2F5] rounded-3xl px-4 py-3 font-bold text-sm cursor-pointer hover:bg-gray-200"
+            className="bg-[#F2F2F5] rounded-3xl px-4 py-3 font-bold text-sm cursor-pointer"
           >
-            Clear
+            Cancel
           </button>
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`rounded-3xl px-4 py-3 font-bold text-sm cursor-pointer ${
+            className={`rounded-3xl px-4 py-3 font-bold text-sm ${
               isFormValid
                 ? "bg-[#DBE8F2] text-black"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
