@@ -10,6 +10,8 @@ import {
 } from "@ant-design/icons";
 
 const AdminDashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user")); // ✅ get logged-in user
+
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -80,19 +82,41 @@ const AdminDashboard = () => {
     { key: "email", header: "Email" },
     { key: "department", header: "Department" },
     { key: "role", header: "Role" },
+    // {
+    //   key: "action",
+    //   header: "Action",
+    //   render: (_, record) => (
+    //     <Popconfirm
+    //       title="Are you sure to delete this employee?"
+    //       onConfirm={() => handleDeleteEmployee(record.id)}
+    //       okText="Yes"
+    //       cancelText="No"
+    //     >
+    //       <Button danger type="text" icon={<DeleteOutlined />} />
+    //     </Popconfirm>
+    //   ),
+    // },
     {
       key: "action",
       header: "Action",
-      render: (_, record) => (
-        <Popconfirm
-          title="Are you sure to delete this employee?"
-          onConfirm={() => handleDeleteEmployee(record.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button danger type="text" icon={<DeleteOutlined />} />
-        </Popconfirm>
-      ),
+      render: (_, record) => {
+        // ✅ If logged-in user is admin and it's his own row → no delete
+        if (user?.role === "admin" && record.id === user?.id) {
+          return <span className="text-gray-400 italic">Not Allowed</span>;
+        }
+
+        // ✅ Otherwise allow delete
+        return (
+          <Popconfirm
+            title="Are you sure to delete this employee?"
+            onConfirm={() => handleDeleteEmployee(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger type="text" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        );
+      },
     },
   ];
 
