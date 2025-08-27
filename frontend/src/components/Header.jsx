@@ -1,11 +1,18 @@
 import React from "react";
 import logo from "../assets/sarvadhi.svg";
-import { NavLink } from "react-router-dom";
-import { Avatar, Dropdown } from "antd";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Avatar } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 const Header = () => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear(); // ✅ clear all data
+    navigate("/login"); // ✅ redirect to login
+    window.location.reload(); // ✅ force refresh so header/user disappears
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white flex justify-between items-center px-10 border-b border-gray-200 py-4">
@@ -103,13 +110,13 @@ const Header = () => {
         </div>
 
         {/* Logout */}
-        <NavLink
+        <button
+          onClick={handleLogout}
           className="bg-[#F2F2F5] flex items-center gap-2 rounded-xl px-3 py-2 font-bold hover:bg-gray-200"
-          to="/login"
         >
           <LogoutOutlined />
           Logout
-        </NavLink>
+        </button>
       </nav>
     </header>
   );
