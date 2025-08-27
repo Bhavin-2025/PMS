@@ -85,7 +85,7 @@ const LoginPage = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="bg-[#0D80F2] rounded-lg w-full p-2 text-sm font-bold text-white cursor-pointer "
+                  className="bg-[#0D80F2] rounded-lg w-full p-2 text-sm font-bold text-white cursor-pointer hover:bg-blue-600 "
                 >
                   Log in
                 </button>

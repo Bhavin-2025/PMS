@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../assets/sarvadhi.svg";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Avatar } from "antd";
+import { Avatar, Popconfirm } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 const Header = () => {
@@ -109,14 +109,19 @@ const Header = () => {
           <span className="font-semibold text-[#2A67B2]">{user?.name}</span>
         </div>
 
-        {/* Logout */}
-        <button
-          onClick={handleLogout}
-          className="bg-[#F2F2F5] flex items-center gap-2 rounded-xl px-3 py-2 font-bold cursor-pointer hover:bg-gray-200"
+        {/* Logout with confirmation */}
+        <Popconfirm
+          title="Are you sure you want to logout?"
+          onConfirm={handleLogout}
+          okText="Yes"
+          cancelText="No"
+          placement="bottomRight"
         >
-          <LogoutOutlined />
-          Logout
-        </button>
+          <button className="bg-[#F2F2F5] flex items-center gap-2 rounded-xl px-3 py-2 font-bold cursor-pointer hover:bg-gray-200">
+            <LogoutOutlined />
+            Logout
+          </button>
+        </Popconfirm>
       </nav>
     </header>
   );
