@@ -279,9 +279,9 @@ const AddTask = () => {
           <button
             type="button"
             onClick={handleCancel}
-            className="bg-[#F2F2F5] rounded-3xl px-4 py-3 font-bold text-sm cursor-pointer"
+            className="bg-[#F2F2F5] rounded-3xl px-4 py-3 font-bold text-sm cursor-pointer hover:bg-gray-200"
           >
-            Cancel
+            Clear
           </button>
           <button
             type="submit"
