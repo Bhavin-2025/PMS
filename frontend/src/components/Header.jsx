@@ -1,10 +1,17 @@
 import React from "react";
 import logo from "../assets/sarvadhi.svg";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const Header = () => {
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
+
+  const getInitials = (name) => {
+    if (!name) return "";
+    const names = name.split(" ");
+    return names.length > 1 ? names[0][0] + names[1][0] : names[0][0];
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white flex justify-between items-center px-10 border-b border-gray-200 py-4">
@@ -12,6 +19,7 @@ const Header = () => {
         <img src={logo} alt="sarvadhi" />
       </div>
 
+      {/* Navigation */}
       <nav className="flex gap-9 items-center text-sm text-[#121417] font-medium">
         {user?.role === "admin" && (
           <>
@@ -58,7 +66,18 @@ const Header = () => {
             </Link>
           </>
         )}
+        <div className="flex items-center gap-2">
+          <Avatar
+            size="small"
+            icon={<UserOutlined />}
+            style={{ backgroundColor: "#2A67B2" }}
+          >
+            {getInitials(user.name)}
+          </Avatar>
+          <span className="font-bold text-[#2A67B2]">{user.name}</span>
+        </div>
 
+        {/* Logout */}
         <Link
           className="bg-[#F2F2F5] rounded-xl p-3 font-bold hover:bg-gray-200"
           to="/login"
