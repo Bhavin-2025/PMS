@@ -248,12 +248,12 @@ const ProjectDetailPage = () => {
               return (
                 <div
                   key={empId}
-                  className="flex gap-2 items-center bg-[#f5f5f5] p-1 rounded-lg shadow-sm "
+                  className="flex gap-2 items-center bg-[#edf2f5] py-1 px-2 rounded-lg shadow-sm hover:bg-[#f8f8f8] "
                 >
                   <div>
                     <Avatar
                       style={{ backgroundColor: "#1677ff" }}
-                      size="small"
+                      size={20}
                       icon={<UserOutlined />}
                     />
                   </div>
