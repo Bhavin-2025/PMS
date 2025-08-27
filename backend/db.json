@@ -31,14 +31,6 @@
       "department": "WebFlow",
       "role": "employee",
       "password": "pawan123"
-    },
-    {
-      "id": "aa69",
-      "name": "Anish",
-      "email": "anish@sarvadhi.com",
-      "department": "AI",
-      "role": "employee",
-      "password": "Anish123"
     }
   ],
   "projects": [
@@ -46,13 +38,28 @@
       "id": "dfed",
       "projectName": "Admin Dragon",
       "description": "A centralized platform for managing projects, employees, and tasks with role-based access ",
-      "employees": ["d597", "1e33"]
+      "employees": [
+        "d597",
+        "1e33"
+      ]
     },
     {
       "id": "021c",
       "projectName": "Solnce",
       "description": "project tracking, enhance team productivity, and ensure seamless communication.",
-      "employees": ["1e33", "7b91"]
+      "employees": [
+        "1e33",
+        "7b91"
+      ]
+    },
+    {
+      "id": "435e",
+      "projectName": "Mjesca",
+      "description": "jewellery project",
+      "employees": [
+        "7b91",
+        "1e33"
+      ]
     }
   ],
   "tasks": [
@@ -60,21 +67,13 @@
       "id": "e73c",
       "taskName": "Design Page",
       "description": "fix page",
-      "employees": ["1e33"],
-      "status": "Completed",
+      "employees": [
+        "1e33"
+      ],
+      "status": "In Progress",
       "priority": "medium",
       "projectId": "dfed",
       "dueDate": "2025-08-29T18:30:00.000Z"
-    },
-    {
-      "id": "ba65",
-      "taskName": "Design UI and Fix Changes",
-      "description": "ABCDEF",
-      "employees": ["d597"],
-      "status": "Not Started",
-      "priority": "high",
-      "projectId": "dfed",
-      "dueDate": "2025-08-28T18:30:00.000Z"
     }
   ]
 }

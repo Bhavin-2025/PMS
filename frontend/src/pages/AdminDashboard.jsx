@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import Table from "../components/Table";
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { Button, Popconfirm, message } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const AdminDashboard = () => {
   const [employees, setEmployees] = useState([]);
@@ -32,7 +34,30 @@ const AdminDashboard = () => {
     { key: "email", header: "Email" },
     { key: "department", header: "Department" },
     { key: "role", header: "Role" },
+    {
+      key: "action",
+      header: "Action",
+      render: (_, record) => (
+        <Popconfirm
+          title="Are you sure to delete this employee?"
+          onConfirm={() => handleDeleteEmployee(record.id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger type="text" icon={<DeleteOutlined />} />
+        </Popconfirm>
+      ),
+    },
   ];
+  const handleDeleteEmployee = async (id) => {
+    try {
+      await api.delete(`/employees/${id}`);
+      setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+      message.success("Employee deleted successfully");
+    } catch (err) {
+      message.error("Failed to delete employee: " + err.message);
+    }
+  };
 
   const Project_columns = [
     {

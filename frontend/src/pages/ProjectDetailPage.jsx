@@ -3,28 +3,30 @@ import Table from "../components/Table";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { Button, Dropdown, Popconfirm, message } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const statusOptions = ["Not Started", "In Progress", "Completed"];
 
 const ProjectDetailPage = () => {
-  const Project_columns = [
-    { key: "tasks", header: "Tasks" },
-    { key: "employees", header: "Assignee" },
-    { key: "dueDate", header: "Due Date" },
-    { key: "status", header: "Status" },
-  ];
-
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null); // ✅ user in state
   const [project, setProject] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [unsavedTasks, setUnsavedTasks] = useState([]);
   const [filterStatus, setFilterStatus] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    // ✅ load user from localStorage once
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   useEffect(() => {
+    if (!user) return; // wait until user is loaded
+
     const fetchProject = async () => {
       try {
         const [projectRes, taskRes, employeeRes] = await Promise.all([
@@ -61,7 +63,20 @@ const ProjectDetailPage = () => {
     fetchProject();
   }, [id, user, navigate]);
 
-  // Filter tasks by project
+  // base table columns
+  const baseColumns = [
+    { key: "tasks", header: "Tasks" },
+    { key: "employees", header: "Assignee" },
+    { key: "dueDate", header: "Due Date" },
+    { key: "status", header: "Status" },
+  ];
+
+  const Project_columns =
+    user?.role === "admin"
+      ? [...baseColumns, { key: "actions", header: "Actions" }]
+      : baseColumns;
+
+  // filter tasks
   const projectTasks = tasks.filter((task) => {
     if (!task.projectId) return false;
     if (typeof task.projectId === "string") return task.projectId === id;
@@ -69,14 +84,12 @@ const ProjectDetailPage = () => {
     return false;
   });
 
-  // Apply status filter
   const filteredTasks = filterStatus
     ? projectTasks.filter((task) => task.status === filterStatus)
     : projectTasks;
 
-  // Generate rows for table
+  // table rows
   const rows = filteredTasks.map((task) => {
-    // Get the current status (including any unsaved changes)
     const currentStatus =
       unsavedTasks.find((t) => t.id === task.id)?.status || task.status;
 
@@ -84,7 +97,7 @@ const ProjectDetailPage = () => {
       .filter((status) => status !== currentStatus)
       .map((status) => ({ key: status, label: status }));
 
-    return {
+    const row = {
       tasks: task.taskName,
       employees: (task.employees || [])
         .filter(Boolean)
@@ -99,15 +112,11 @@ const ProjectDetailPage = () => {
             items,
             onClick: (e) => {
               const newStatus = e.key;
-
-              // Update UI immediately
               setTasks((prev) =>
                 prev.map((t) =>
                   t.id === task.id ? { ...t, status: newStatus } : t
                 )
               );
-
-              // Track unsaved changes
               setUnsavedTasks((prev) => {
                 const already = prev.find((t) => t.id === task.id);
                 if (already) {
@@ -121,16 +130,41 @@ const ProjectDetailPage = () => {
           }}
           trigger={["click"]}
         >
-          {/* Wrap Button in a span or div to fix the React.Children.only error */}
           <span>
             <Button>{currentStatus}</Button>
           </span>
         </Dropdown>
       ),
     };
+
+    if (user?.role === "admin") {
+      row.actions = (
+        <Popconfirm
+          title="Are you sure you want to delete this task?"
+          onConfirm={() => handleDeleteTask(task.id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger type="text" icon={<DeleteOutlined />} />
+        </Popconfirm>
+      );
+    }
+
+    return row;
   });
 
-  // Save changes
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setUnsavedTasks((prev) => prev.filter((t) => t.id !== taskId));
+      message.success("✅ Task deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      message.error("❌ Failed to delete task!");
+    }
+  };
+
   const handleSaveChanges = async () => {
     try {
       await Promise.all(
@@ -146,7 +180,6 @@ const ProjectDetailPage = () => {
     }
   };
 
-  // Delete project
   const handleDeleteProject = async () => {
     try {
       await api.delete(`/projects/${id}`);
@@ -157,6 +190,8 @@ const ProjectDetailPage = () => {
       message.error("❌ Failed to delete project!");
     }
   };
+
+  if (!user) return <div>Loading...</div>; // ✅ wait until user is ready
 
   return (
     <div className="container mx-auto px-5">
@@ -179,7 +214,6 @@ const ProjectDetailPage = () => {
               Edit Project
             </Link>
           )}
-
           <Link
             to={`../tasks?projectId=${id}`}
             className="bg-[#F0F2F5] text-sm py-2 px-4 rounded-lg font-medium cursor-pointer"
@@ -214,7 +248,7 @@ const ProjectDetailPage = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1"
+            className="border border-gray-300 rounded px-2 py-1 cursor-pointer"
           >
             <option value="">All</option>
             {statusOptions.map((status) => (
@@ -238,7 +272,7 @@ const ProjectDetailPage = () => {
         </Link>
       </div>
 
-      {/* Save Changes & Delete */}
+      {/* Save & Delete */}
       <div className="flex justify-end gap-3 mt-4">
         {user?.role === "admin" && (
           <Popconfirm
@@ -255,7 +289,7 @@ const ProjectDetailPage = () => {
         <button
           onClick={handleSaveChanges}
           disabled={unsavedTasks.length === 0}
-          className={`text-sm py-2 px-4 rounded-lg font-medium ${
+          className={`text-sm py-2 px-4 rounded-lg font-medium cursor-pointer ${
             unsavedTasks.length === 0
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
               : "bg-[#0D80F2] text-white"
