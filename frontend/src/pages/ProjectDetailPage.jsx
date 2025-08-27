@@ -11,21 +11,22 @@ const ProjectDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null); // ✅ user in state
+  const [user, setUser] = useState(null);
   const [project, setProject] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [unsavedTasks, setUnsavedTasks] = useState([]);
   const [filterStatus, setFilterStatus] = useState("");
 
+  // Load user from localStorage
   useEffect(() => {
-    // ✅ load user from localStorage once
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
   }, []);
 
+  // Fetch project, tasks, employees
   useEffect(() => {
-    if (!user) return; // wait until user is loaded
+    if (!user) return;
 
     const fetchProject = async () => {
       try {
@@ -40,11 +41,10 @@ const ProjectDetailPage = () => {
           (t) => t.projectId === projectData.id
         );
 
+        // Employee project access check
         if (user?.role === "employee") {
-          const isAssigned = projectTasks.some((t) =>
-            (t.employees || []).includes(user.id)
-          );
-          if (!isAssigned) {
+          const isAssignedToProject = projectData.employees?.includes(user.id);
+          if (!isAssignedToProject) {
             message.error("You are not assigned to this project");
             navigate("/employee/project");
             return;
@@ -63,9 +63,10 @@ const ProjectDetailPage = () => {
     fetchProject();
   }, [id, user, navigate]);
 
-  // base table columns
+  // Table columns
   const baseColumns = [
-    { key: "tasks", header: "Tasks" },
+    { key: "tasks", header: "Task Name" },
+    { key: "description", header: "Description" }, // ✅ New column
     { key: "employees", header: "Assignee" },
     { key: "dueDate", header: "Due Date" },
     { key: "status", header: "Status" },
@@ -76,83 +77,93 @@ const ProjectDetailPage = () => {
       ? [...baseColumns, { key: "actions", header: "Actions" }]
       : baseColumns;
 
-  // filter tasks
-  const projectTasks = tasks.filter((task) => {
-    if (!task.projectId) return false;
-    if (typeof task.projectId === "string") return task.projectId === id;
-    if (typeof task.projectId === "object") return task.projectId.value === id;
-    return false;
-  });
-
+  // Filter tasks by status
   const filteredTasks = filterStatus
-    ? projectTasks.filter((task) => task.status === filterStatus)
-    : projectTasks;
+    ? tasks.filter((task) => task.status === filterStatus)
+    : tasks;
 
-  // table rows
-  const rows = filteredTasks.map((task) => {
-    const currentStatus =
-      unsavedTasks.find((t) => t.id === task.id)?.status || task.status;
+  // Map rows for table
+  const rows =
+    filteredTasks.length > 0
+      ? filteredTasks.map((task) => {
+          const currentStatus =
+            unsavedTasks.find((t) => t.id === task.id)?.status || task.status;
 
-    const items = statusOptions
-      .filter((status) => status !== currentStatus)
-      .map((status) => ({ key: status, label: status }));
+          const items = statusOptions
+            .filter((status) => status !== currentStatus)
+            .map((status) => ({ key: status, label: status }));
 
-    const row = {
-      tasks: task.taskName,
-      employees: (task.employees || [])
-        .filter(Boolean)
-        .map(
-          (empId) => employees.find((e) => e.id === empId)?.name || "Unknown"
-        )
-        .join(", "),
-      dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—",
-      status: (
-        <Dropdown
-          menu={{
-            items,
-            onClick: (e) => {
-              const newStatus = e.key;
-              setTasks((prev) =>
-                prev.map((t) =>
-                  t.id === task.id ? { ...t, status: newStatus } : t
-                )
-              );
-              setUnsavedTasks((prev) => {
-                const already = prev.find((t) => t.id === task.id);
-                if (already) {
-                  return prev.map((t) =>
-                    t.id === task.id ? { ...t, status: newStatus } : t
-                  );
-                }
-                return [...prev, { ...task, status: newStatus }];
-              });
-            },
-          }}
-          trigger={["click"]}
-        >
-          <span>
-            <Button>{currentStatus}</Button>
-          </span>
-        </Dropdown>
-      ),
-    };
+          const row = {
+            tasks: task.taskName,
+            description: task.description, // ✅ add description here
+            employees: (task.employees || [])
+              .map(
+                (empId) =>
+                  employees.find((e) => e.id === empId)?.name || "Unknown"
+              )
+              .join(", "),
+            dueDate: task.dueDate
+              ? new Date(task.dueDate).toLocaleDateString()
+              : "—",
+            status: (
+              <Dropdown
+                menu={{
+                  items,
+                  onClick: (e) => {
+                    const newStatus = e.key;
+                    setTasks((prev) =>
+                      prev.map((t) =>
+                        t.id === task.id ? { ...t, status: newStatus } : t
+                      )
+                    );
+                    setUnsavedTasks((prev) => {
+                      const already = prev.find((t) => t.id === task.id);
+                      if (already) {
+                        return prev.map((t) =>
+                          t.id === task.id ? { ...t, status: newStatus } : t
+                        );
+                      }
+                      return [...prev, { ...task, status: newStatus }];
+                    });
+                  },
+                }}
+                trigger={["click"]}
+              >
+                <span>
+                  <Button>{currentStatus}</Button>
+                </span>
+              </Dropdown>
+            ),
+          };
 
-    if (user?.role === "admin") {
-      row.actions = (
-        <Popconfirm
-          title="Are you sure you want to delete this task?"
-          onConfirm={() => handleDeleteTask(task.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button danger type="text" icon={<DeleteOutlined />} />
-        </Popconfirm>
-      );
-    }
+          if (user?.role === "admin") {
+            row.actions = (
+              <Popconfirm
+                title="Are you sure you want to delete this task?"
+                onConfirm={() => handleDeleteTask(task.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button danger type="text" icon={<DeleteOutlined />} />
+              </Popconfirm>
+            );
+          }
 
-    return row;
-  });
+          return row;
+        })
+      : user?.role === "employee"
+      ? [
+          {
+            tasks: "No tasks assigned yet",
+            description: "-",
+            employees: "-",
+            dueDate: "-",
+            status: "-",
+          },
+        ]
+      : [];
 
+  // Delete task
   const handleDeleteTask = async (taskId) => {
     try {
       await api.delete(`/tasks/${taskId}`);
@@ -165,6 +176,7 @@ const ProjectDetailPage = () => {
     }
   };
 
+  // Save changes
   const handleSaveChanges = async () => {
     try {
       await Promise.all(
@@ -180,6 +192,7 @@ const ProjectDetailPage = () => {
     }
   };
 
+  // Delete project
   const handleDeleteProject = async () => {
     try {
       await api.delete(`/projects/${id}`);
@@ -191,7 +204,7 @@ const ProjectDetailPage = () => {
     }
   };
 
-  if (!user) return <div>Loading...</div>; // ✅ wait until user is ready
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto px-5">

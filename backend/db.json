@@ -31,14 +31,6 @@
       "department": "WebFlow",
       "role": "employee",
       "password": "pawan123"
-    },
-    {
-      "id": "5ef3",
-      "name": "Anish",
-      "email": "anish@gmail.com",
-      "department": "AI",
-      "role": "employee",
-      "password": "anish123"
     }
   ],
   "projects": [
@@ -56,19 +48,7 @@
       "projectName": "Solnce",
       "description": "project tracking, enhance team productivity, and ensure seamless communication.",
       "employees": [
-        "1e33",
-        "7b91"
-      ]
-    },
-    {
-      "id": "89d4",
-      "projectName": "Maggie",
-      "description": "Noodle company",
-      "employees": [
-        "d597",
-        "1e33",
-        "7b91",
-        "5ef3"
+        "1e33"
       ]
     }
   ],
@@ -84,6 +64,30 @@
       "priority": "medium",
       "projectId": "dfed",
       "dueDate": "2025-08-29T18:30:00.000Z"
+    },
+    {
+      "id": "4f5f",
+      "taskName": "Design UI and Fix Changes",
+      "description": "check various issues in UI and fixed it",
+      "employees": [
+        "d597"
+      ],
+      "status": "Not Started",
+      "priority": "medium",
+      "projectId": "dfed",
+      "dueDate": "2025-08-26T18:30:00.000Z"
+    },
+    {
+      "id": "5e9c",
+      "taskName": "SEO Optimization",
+      "description": "Work on SEO in all pages",
+      "employees": [
+        "7b91"
+      ],
+      "status": "Not Started",
+      "priority": "high",
+      "projectId": "Solnce",
+      "dueDate": "2025-08-30T18:30:00.000Z"
     }
   ]
 }
