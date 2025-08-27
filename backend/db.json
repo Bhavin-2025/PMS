@@ -31,6 +31,14 @@
       "department": "WebFlow",
       "role": "employee",
       "password": "pawan123"
+    },
+    {
+      "id": "5ef3",
+      "name": "Anish",
+      "email": "anish@gmail.com",
+      "department": "AI",
+      "role": "employee",
+      "password": "anish123"
     }
   ],
   "projects": [
@@ -50,6 +58,17 @@
       "employees": [
         "1e33",
         "7b91"
+      ]
+    },
+    {
+      "id": "89d4",
+      "projectName": "Maggie",
+      "description": "Noodle company",
+      "employees": [
+        "d597",
+        "1e33",
+        "7b91",
+        "5ef3"
       ]
     }
   ],
