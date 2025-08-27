@@ -112,7 +112,7 @@ const Header = () => {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="bg-[#F2F2F5] flex items-center gap-2 rounded-xl px-3 py-2 font-bold hover:bg-gray-200"
+          className="bg-[#F2F2F5] flex items-center gap-2 rounded-xl px-3 py-2 font-bold cursor-pointer hover:bg-gray-200"
         >
           <LogoutOutlined />
           Logout
