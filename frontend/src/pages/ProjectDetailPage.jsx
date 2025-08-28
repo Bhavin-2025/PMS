@@ -316,7 +316,7 @@ const ProjectDetailPage = () => {
                     >
                       <Avatar
                         style={{ backgroundColor: "#1677ff" }}
-                        size={20}
+                        size={22}
                         icon={<UserOutlined />}
                       >
                         {emp.name.charAt(0)}
