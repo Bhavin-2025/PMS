@@ -3,7 +3,11 @@ import Table from "../components/Table";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { Button, Dropdown, Popconfirm, message, Avatar, Tooltip } from "antd";
-import { DeleteOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  UserOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 const statusOptions = ["Not Started", "In Progress", "Completed"];
 
@@ -93,6 +97,25 @@ const ProjectDetailPage = () => {
             .filter((status) => status !== currentStatus)
             .map((status) => ({ key: status, label: status }));
 
+          // 🔔 Due date check
+          let dueDateDisplay = "—";
+          if (task.dueDate) {
+            const due = new Date(task.dueDate);
+            const today = new Date();
+            const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+
+            dueDateDisplay = (
+              <div className="flex items-center gap-1">
+                <span>{due.toLocaleDateString()}</span>
+                {diffDays <= 3 && diffDays >= 0 && (
+                  <Tooltip title="Due date is near!">
+                    <ExclamationCircleOutlined style={{ color: "red" }} />
+                  </Tooltip>
+                )}
+              </div>
+            );
+          }
+
           const row = {
             tasks: task.taskName,
             description: task.description,
@@ -102,9 +125,7 @@ const ProjectDetailPage = () => {
                   employees.find((e) => e.id === empId)?.name || "Unknown"
               )
               .join(", "),
-            dueDate: task.dueDate
-              ? new Date(task.dueDate).toLocaleDateString()
-              : "—",
+            dueDate: dueDateDisplay,
             status: (
               <Dropdown
                 menu={{
@@ -239,32 +260,44 @@ const ProjectDetailPage = () => {
       {/* ✅ Assigned Employees with Avatar + Name */}
       <div className="flex flex-col mt-4 gap-2">
         <h4 className="text-lg font-bold">Assigned Employees</h4>
-        <div className="flex flex-wrap gap-4 mt-2">
+        <div className="flex items-center gap-2 mt-2">
           {Array.isArray(project?.employees) &&
           project?.employees.length > 0 ? (
-            project.employees.map((empId) => {
-              const emp = employees.find((e) => e.id === empId);
-              if (!emp) return null;
+            (() => {
+              const assigned = project.employees
+                .map((empId) => employees.find((e) => e.id === empId))
+                .filter(Boolean);
+
+              // Always show all avatars
+              const visibleEmployees = assigned;
+              const extraCount = assigned.length - 1;
+
               return (
-                <div
-                  key={empId}
-                  className="flex gap-2 items-center bg-[#edf2f5] py-1 px-2 rounded-lg shadow-sm hover:bg-[#f8f8f8] "
-                >
-                  <div>
-                    <Avatar
-                      style={{ backgroundColor: "#1677ff" }}
-                      size={20}
-                      icon={<UserOutlined />}
-                    />
-                  </div>
-                  <div>
-                    <span className="mt-1 text-sm font-medium text-gray-700">
-                      {emp.name}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-1">
+                  {visibleEmployees.map((emp) => (
+                    <Tooltip
+                      className="!-ml-2 first:!-ml-0 !border !border-white"
+                      title={emp.name}
+                      key={emp.id}
+                    >
+                      <Avatar
+                        style={{ backgroundColor: "#1677ff" }}
+                        size={20}
+                        icon={<UserOutlined />}
+                      >
+                        {emp.name.charAt(0)}
+                      </Avatar>
+                    </Tooltip>
+                  ))}
+
+                  {/* Show first employee name + more */}
+                  <span className="pl-1 text-sm text-gray-700 font-medium">
+                    {visibleEmployees[0]?.name}
+                    {extraCount > 0 && ` +${extraCount} more`}
+                  </span>
                 </div>
               );
-            })
+            })()
           ) : (
             <span className="text-gray-500">No employees assigned</span>
           )}
