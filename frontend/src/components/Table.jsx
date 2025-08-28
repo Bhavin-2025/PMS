@@ -35,7 +35,7 @@ const Table = ({ columns = [], data = [], defaultPageSize = 5 }) => {
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className="px-2 py-4 text-sm text-[#6B7582]"
+                    className="px-4 py-4 text-sm text-[#6B7582]"
                   >
                     {col.render ? col.render(row[col.key], row) : row[col.key]}
                   </td>
