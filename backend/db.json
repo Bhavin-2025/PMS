@@ -26,11 +26,11 @@
     },
     {
       "id": "7b91",
-      "name": "Pawan Vasoya",
-      "email": "pawan@gmail.com",
+      "name": "Pavan Vasoya",
+      "email": "pavan@gmail.com",
       "department": "WebFlow",
       "role": "employee",
-      "password": "pawan123"
+      "password": "pavan123"
     },
     {
       "id": "92ac",
@@ -62,40 +62,25 @@
       "id": "dfed",
       "projectName": "Admin Dragon",
       "description": "A centralized platform for managing projects, employees, and tasks with role-based access.",
-      "employees": [
-        "d597",
-        "1e33",
-        "7b91"
-      ]
+      "employees": ["d597", "1e33", "7b91"]
     },
     {
       "id": "021c",
       "projectName": "Solnce",
       "description": "Project tracking, enhance team productivity, and ensure seamless communication.",
-      "employees": [
-        "1e33",
-        "7b91"
-      ]
+      "employees": ["1e33", "7b91"]
     },
     {
       "id": "9e12",
       "projectName": "MedixCare",
       "description": "Healthcare management system to manage patients, doctors, and appointments.",
-      "employees": [
-        "92ac",
-        "f81a",
-        "ab44"
-      ]
+      "employees": ["92ac", "f81a", "ab44"]
     },
     {
       "id": "c77a",
       "projectName": "ShopEase",
       "description": "An e-commerce platform for seamless shopping experience.",
-      "employees": [
-        "7b91",
-        "f81a",
-        "d597"
-      ]
+      "employees": ["7b91", "f81a", "d597"]
     }
   ],
   "tasks": [
@@ -103,9 +88,7 @@
       "id": "e73c",
       "taskName": "Design Page",
       "description": "Fix layout and spacing issues in the landing page.",
-      "employees": [
-        "1e33"
-      ],
+      "employees": ["1e33"],
       "status": "Not Started",
       "priority": "medium",
       "projectId": "dfed",
@@ -115,9 +98,7 @@
       "id": "4f5f",
       "taskName": "Design UI and Fix Changes",
       "description": "Check various issues in UI and fix them.",
-      "employees": [
-        "d597"
-      ],
+      "employees": ["d597"],
       "status": "In Progress",
       "priority": "medium",
       "projectId": "dfed",
@@ -127,9 +108,7 @@
       "id": "5e9c",
       "taskName": "SEO Optimization",
       "description": "Work on SEO in all pages to improve ranking.",
-      "employees": [
-        "7b91"
-      ],
+      "employees": ["7b91"],
       "status": "Not Started",
       "priority": "high",
       "projectId": "021c",
@@ -139,9 +118,7 @@
       "id": "a2f7",
       "taskName": "API Integration",
       "description": "Integrate authentication APIs with the backend.",
-      "employees": [
-        "92ac"
-      ],
+      "employees": ["92ac"],
       "status": "In Progress",
       "priority": "high",
       "projectId": "9e12",
@@ -151,13 +128,21 @@
       "id": "b6d9",
       "taskName": "Wireframe Design",
       "description": "Prepare wireframes for checkout flow.",
-      "employees": [
-        "f81a"
-      ],
+      "employees": ["f81a"],
       "status": "Completed",
       "priority": "low",
       "projectId": "c77a",
       "dueDate": "2025-08-20T18:30:00.000Z"
+    },
+    {
+      "id": "a118",
+      "taskName": "Login Module",
+      "description": "login screen",
+      "employees": ["7b91", "1e33"],
+      "status": "Not Started",
+      "priority": "high",
+      "projectId": "dfed",
+      "dueDate": "2025-08-30T18:30:00.000Z"
     }
   ]
 }

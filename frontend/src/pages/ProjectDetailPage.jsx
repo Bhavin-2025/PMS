@@ -7,6 +7,9 @@ import {
   DeleteOutlined,
   UserOutlined,
   ExclamationCircleOutlined,
+  ArrowUpOutlined,
+  MinusOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 
 const statusOptions = ["Not Started", "In Progress", "Completed"];
@@ -72,6 +75,7 @@ const ProjectDetailPage = () => {
     { key: "tasks", header: "Task Name" },
     { key: "description", header: "Description" },
     { key: "employees", header: "Assignee" },
+    { key: "priority", header: "Priority" },
     { key: "dueDate", header: "Due Date" },
     { key: "status", header: "Status" },
   ];
@@ -116,7 +120,41 @@ const ProjectDetailPage = () => {
             );
           }
 
+          let priorityIcon;
+          if (task.priority === "high") {
+            priorityIcon = (
+              <div className="flex justify-center">
+                <Tooltip title="High Priority">
+                  <ArrowUpOutlined style={{ color: "red", fontSize: "16px" }} />
+                </Tooltip>
+              </div>
+            );
+          } else if (task.priority === "medium") {
+            priorityIcon = (
+              <div className="flex justify-center">
+                <Tooltip title="Medium Priority">
+                  <MinusOutlined
+                    style={{ color: "orange", fontSize: "16px" }}
+                  />
+                </Tooltip>
+              </div>
+            );
+          } else if (task.priority === "low") {
+            priorityIcon = (
+              <div className="flex justify-center">
+                <Tooltip title="Low Priority">
+                  <ArrowDownOutlined
+                    style={{ color: "green", fontSize: "16px" }}
+                  />
+                </Tooltip>
+              </div>
+            );
+          } else {
+            priorityIcon = <div className="flex justify-center">-</div>;
+          }
+
           const row = {
+            // priority: priorityIcon,
             tasks: task.taskName,
             description: task.description,
             employees: (task.employees || [])
@@ -125,6 +163,7 @@ const ProjectDetailPage = () => {
                   employees.find((e) => e.id === empId)?.name || "Unknown"
               )
               .join(", "),
+            priority: priorityIcon,
             dueDate: dueDateDisplay,
             status: (
               <Dropdown
@@ -175,6 +214,7 @@ const ProjectDetailPage = () => {
       : user?.role === "employee"
       ? [
           {
+            priority: "-",
             tasks: "No tasks assigned yet",
             description: "-",
             employees: "-",
