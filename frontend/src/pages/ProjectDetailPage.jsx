@@ -7,9 +7,7 @@ import {
   DeleteOutlined,
   UserOutlined,
   ExclamationCircleOutlined,
-  ArrowUpOutlined,
-  MinusOutlined,
-  ArrowDownOutlined,
+  FlagOutlined,
 } from "@ant-design/icons";
 
 const statusOptions = ["Not Started", "In Progress", "Completed"];
@@ -125,7 +123,7 @@ const ProjectDetailPage = () => {
             priorityIcon = (
               <div className="flex justify-center">
                 <Tooltip title="High Priority">
-                  <ArrowUpOutlined style={{ color: "red", fontSize: "16px" }} />
+                  <FlagOutlined style={{ color: "red", fontSize: "16px" }} />
                 </Tooltip>
               </div>
             );
@@ -133,9 +131,7 @@ const ProjectDetailPage = () => {
             priorityIcon = (
               <div className="flex justify-center">
                 <Tooltip title="Medium Priority">
-                  <MinusOutlined
-                    style={{ color: "orange", fontSize: "16px" }}
-                  />
+                  <FlagOutlined style={{ color: "orange", fontSize: "16px" }} />
                 </Tooltip>
               </div>
             );
@@ -143,9 +139,7 @@ const ProjectDetailPage = () => {
             priorityIcon = (
               <div className="flex justify-center">
                 <Tooltip title="Low Priority">
-                  <ArrowDownOutlined
-                    style={{ color: "green", fontSize: "16px" }}
-                  />
+                  <FlagOutlined style={{ color: "green", fontSize: "16px" }} />
                 </Tooltip>
               </div>
             );
